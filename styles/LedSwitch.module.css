@@ -7,14 +7,15 @@
 }
 
 .button {
-    background-color: #9E5928;
-    border: 3px solid #8F5024;
+    background-color: var(--light);
+    border: 3px solid var(--darker);
     padding: 0.5rem;
     color: white;
     font-size: large;
     font-weight: bold;
     text-align: center;
     width: 50%;
+    cursor: pointer;
 }
 
 .off {

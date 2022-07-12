@@ -7,41 +7,45 @@ import LedSwitch from '../components/led-switch'
 import { DhtApi } from '../models/dht'
 
 interface HomeData {
-  dht: DhtApi
+    dht: DhtApi
 }
 
 function Home({ dht }: HomeData) {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Unnamed project</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    return (
+        <div className={styles.container}>
+            <Head>
+                <title>Unnamed project</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
 
-      <main className={styles.main}>
-        <div className='container'>
-          <Card data={dht.temperature + ' &deg;C'} description='Temperature' />
-          <Card data='42%' description='Humidity' />
+            <main className={styles.main}>
+                <div className='container'>
+                    <Card data={dht.temperature + 'ºC'} description='Temperature' />
+                    <Card data={dht.humidity + '%'} description='Humidity' />
+                </div>
+                <div className='container'>
+                    <LedSwitch />
+                </div>
+                <div className='container'>
+                    <SendMessage />
+                </div>
+            </main>
         </div>
-        <div className='container'>
-          <LedSwitch />
-        </div>
-        <div className='container'>
-          <SendMessage />
-        </div>
-      </main>
-    </div>
-  )
+    )
 }
 
 export async function getStaticProps() {
-  const res = await fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht')
-  const dht: DhtApi = await res.json();
-  return {
-    props: {
-      dht: dht
+//    const res = await fetch('http:/127.0.0.1:3000/dht')
+    //const dht: DhtApi = await res.json();
+    return {
+        props: {
+            dht: {
+                time: "yeet",
+                temperature: 27.2,
+                humidity: 69,
+            }
+        }
     }
-  }
 }
 
 

@@ -1,6 +1,6 @@
 .input {
-    background-color: #9E5928;
-    border: 3px solid #8F5024;
+    background-color: var(--light);
+    border: 3px solid var(--darker);
     border-radius: 15px;
     padding: 0.5rem;
     color: white;
@@ -10,15 +10,16 @@
 
 .input:focus {
     outline: none;
-    border: 3px solid #351108;
+    border: 3px solid var(--dark);
 }
 
 .button {
     border: 0;
     border-radius: 15px;
     padding: 0.5rem;
-    background-color: #351108;
-    border: 3px solid #351108;
-    color: white;
+    background-color: var(--confirm);
+    border: 3px solid var(--confirm);
+    color: var(--text-confirm);
     margin: 0.2rem;
+    font-weight: bold;    
 }
