@@ -1,5 +1,9 @@
 .main {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: row;
+    padding-top: 4em;
+}
+
+.filler {
+    flex-grow: 4;
 }
