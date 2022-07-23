@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --background: #1f1c17;
     --dark: #2a2319;
@@ -9,6 +13,7 @@
     --text-confirm: #d6e6b5;
 }
 
+/*
 html,
 body {
   padding: 0;
@@ -25,3 +30,4 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
+*/
