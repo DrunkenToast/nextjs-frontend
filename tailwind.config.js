@@ -19,7 +19,7 @@ module.exports = {
                 },
                 'danger': {
                     900: '#9b2c20',
-                    200: '#cf928b',
+                    200: '#ffb9a7',
                 }
             }
         },

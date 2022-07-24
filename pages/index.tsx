@@ -4,9 +4,10 @@ import Head from 'next/head'
 import SendMessage from '../components/send-message'
 import LedSwitch from '../components/led-switch'
 import { DhtApi } from '../models/dht'
-import { Toast, ToastType} from '../components/toast'
-import ToastItem from '../components/toast'
+import { Toast, ToastType } from '../models/toast'
+import ToastContainer from '../components/toast-container'
 import { useState } from 'react'
+import { useToasts } from '../components/toast-providor'
 
 interface HomeData {
     dht: DhtApi
@@ -18,18 +19,7 @@ function Home({ dht }: HomeData) {
         console.log('Refreshing');
     }, 5 * 60 * 1000);
 
-    const [toasts, setToasts] = useState<Toast[]>([]);
-    
-    const removeToast = (selectedToast: Toast) => {
-        const newToasts = toasts.filter((toast) => selectedToast !== toast)
-        setToasts(newToasts)
-    }
-    
-    const addToast = (newToast: Toast) => {
-        const newToasts = toasts.slice();
-        newToasts.push(newToast)
-        setToasts(newToasts);
-    }
+    const { addToast } = useToasts();
 
     return (
         <div>
@@ -39,16 +29,12 @@ function Home({ dht }: HomeData) {
             </Head>
 
             <main className='min-h-screen bg-primary flex'>
-                {
-                    toasts.map((toast) => {
-                        console.log(toasts); 
-                        return <ToastItem type={toast.type} text={toast.text} />
-                    })
-                }
                 <div className='flex-grow hidden sm:block' />
 
+                <ToastContainer /> 
+
                 <div className='sm:w-96 w-full mt-32'>
-                    <div className='flex flex-row' onClick={() => addToast({type: ToastType.success, text: 'test'})} >
+                    <div className='flex flex-row' onClick={() => addToast("Testers!", ToastType.error)} >
                         <Card data={dht.temperature + 'ºC'} description='Temperature' />
                         <Card data={dht.humidity + '%'} description='Humidity' />
                     </div>
