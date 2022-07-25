@@ -1,25 +1,29 @@
-import type { NextPage } from 'next'
 import Card from '../components/card'
 import Head from 'next/head'
 import SendMessage from '../components/send-message'
 import LedSwitch from '../components/led-switch'
 import { DhtApi } from '../models/dht'
-import { Toast, ToastType } from '../models/toast'
+import { ToastType } from '../models/toast'
 import ToastContainer from '../components/toast-container'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useToasts } from '../components/toast-providor'
 
 interface HomeData {
     dht: DhtApi
 }
 
-function Home({ dht }: HomeData) {
-    setInterval(() => {
-        dht = getDht();
-        console.log('Refreshing');
-    }, 5 * 60 * 1000);
-
+function Home(staticDht: HomeData) {
     const { addToast } = useToasts();
+    const [ dht, setDht ] = useState<DhtApi>(staticDht.dht);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setDht(getDht());
+            console.log('Refresh :)')
+        }, 120 * 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div>
@@ -31,7 +35,7 @@ function Home({ dht }: HomeData) {
             <main className='min-h-screen bg-primary flex'>
                 <div className='flex-grow hidden sm:block' />
 
-                <ToastContainer /> 
+                <ToastContainer />
 
                 <div className='sm:w-96 w-full mt-32'>
                     <div className='flex flex-row' onClick={() => addToast("Testers!", ToastType.error)} >
@@ -56,7 +60,7 @@ function getDht(): DhtApi {
     //const dht: DhtApi = await res.json();
     return {
         time: "yeet",
-        temperature: 27.2,
+        temperature: 27.2 + Math.floor(Math.random() * 10),
         humidity: 69,
     }
 }

@@ -2,11 +2,31 @@ import { ToastType } from "../models/toast";
 import { useToasts } from "./toast-providor";
 
 const LedSwitch = () => {
-    const {addToast} = useToasts();
+    const { addToast } = useToasts();
 
     function switchLed(state: boolean) {
-        console.log(process.env.NEXT_PUBLIC_API_HOST, state);
-        addToast('Switched LED ' + (state ? 'on' : 'off'), ToastType.success)
+        console.log(process.env.NEXT_PUBLIC_API_HOST + '/led', state);
+        fetch(process.env.NEXT_PUBLIC_API_HOST + '/led', {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                state: state
+            })
+        })
+            .then((response) => {
+                if (!response.ok)
+                    throw new Error('Request failed');
+            })
+            .then(() => {
+                addToast('Switched LED ' + (state ? 'on' : 'off'), ToastType.success);
+            })
+            .catch((err) => {
+                addToast('Failed to switch LED', ToastType.error);
+                console.error(err);
+            })
     }
 
     return (
