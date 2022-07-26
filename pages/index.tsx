@@ -7,9 +7,11 @@ import { ToastType } from '../models/toast'
 import ToastContainer from '../components/toast-container'
 import { useEffect, useState } from 'react'
 import { useToasts } from '../components/toast-providor'
+import DhtGraph from '../components/dht-graph'
 
 interface HomeData {
-    dht: DhtApi
+    dht: DhtApi,
+    dhtHistory: DhtApi[],
 }
 
 function Home(staticDht: HomeData) {
@@ -33,22 +35,19 @@ function Home(staticDht: HomeData) {
             </Head>
 
             <main className='min-h-screen bg-primary flex'>
-                <div className='flex-grow hidden sm:block' />
-
                 <ToastContainer />
+                <div className='flex-grow hidden sm:block' />
 
                 <div className='sm:w-96 w-full mt-32'>
                     <div className='flex flex-row' onClick={() => addToast("Testers!", ToastType.error)} >
                         <Card data={dht.temperature + 'ºC'} description='Temperature' />
                         <Card data={dht.humidity + '%'} description='Humidity' />
                     </div>
-                    <div className='container'>
-                        <LedSwitch />
-                    </div>
-                    <div className='container'>
-                        <SendMessage />
-                    </div>
+                    <LedSwitch />
+                    <SendMessage />
+                    <DhtGraph dhtHistory={staticDht.dhtHistory}/>
                 </div>
+
                 <div className='flex-grow hidden sm:block' />
             </main>
         </div>
@@ -65,10 +64,16 @@ function getDht(): DhtApi {
     }
 }
 
+async function getDhtHistory(): Promise<DhtApi[]> {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history');
+    return await res.json();
+}
+
 export async function getStaticProps() {
     return {
         props: {
-            dht: getDht()
+            dht: getDht(),
+            dhtHistory: await getDhtHistory(),
         }
     }
 }
