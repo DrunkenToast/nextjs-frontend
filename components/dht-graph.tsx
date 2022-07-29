@@ -10,7 +10,7 @@ import {
     Legend,
 } from 'chart.js';
 import { useToasts } from "./toast-providor";
-import { DhtApi } from "../models/dht";
+import { Dht } from "../models/dht";
 
 ChartJS.register(
     CategoryScale,
@@ -33,25 +33,25 @@ const graphOptions = {
 };
 
 type Props = {
-    dhtHistory: DhtApi[]
+    dhtHistory: Dht[]
 }
 
 const DhtGraph = ({ dhtHistory }: Props) => {
     const { addToast } = useToasts();
 
     const data = {
-        labels: dhtHistory.map((dht: DhtApi) => dht.time),
+        labels: dhtHistory.map((dht: Dht) => dht.time),
         datasets: [
             {
                 label: 'Temperature',
-                data: dhtHistory.map((dht: DhtApi) => dht.temperature),
+                data: dhtHistory.map((dht: Dht) => dht.temperature),
                 borderColor: 'rgb(246, 146, 40)',
                 backgroundColor: 'rgba(246, 146, 40, 0.5)',
                 tension: 0.3,
             },
             {
                 label: 'Humidity',
-                data: dhtHistory.map((dht: DhtApi) => dht.humidity),
+                data: dhtHistory.map((dht: Dht) => dht.humidity),
                 borderColor: 'rgb(53, 162, 235)',
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
                 tension: 0.3,
@@ -60,12 +60,9 @@ const DhtGraph = ({ dhtHistory }: Props) => {
     };
 
     return (
-        <div className="bg-secondary-500 rounded-lg p-2 text-white font-bold m-5">
-            <h2>History</h2>
             <div className="h-64">
                 <Line  options={graphOptions} data={data} />
             </div>
-        </div>
     )
 }
 

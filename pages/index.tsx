@@ -2,25 +2,28 @@ import Card from '../components/card'
 import Head from 'next/head'
 import SendMessage from '../components/send-message'
 import LedSwitch from '../components/led-switch'
-import { DhtApi } from '../models/dht'
+import { Dht } from '../models/dht'
 import { ToastType } from '../models/toast'
 import ToastContainer from '../components/toast-container'
 import { useEffect, useState } from 'react'
 import { useToasts } from '../components/toast-providor'
-import DhtGraph from '../components/dht-graph'
+import DhtHistory from '../components/dht-history'
 
 interface HomeData {
-    dht: DhtApi,
-    dhtHistory: DhtApi[],
+    dht: Dht,
+    dhtHistory: Dht[],
 }
 
 function Home(staticDht: HomeData) {
     const { addToast } = useToasts();
-    const [ dht, setDht ] = useState<DhtApi>(staticDht.dht);
+    const [dht, setDht] = useState<Dht>(staticDht.dht);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setDht(getDht());
+            const fetchData = async () => {
+                setDht(await getDht());
+            }
+            fetchData();
             console.log('Refresh :)')
         }, 120 * 1000);
 
@@ -45,7 +48,7 @@ function Home(staticDht: HomeData) {
                     </div>
                     <LedSwitch />
                     <SendMessage />
-                    <DhtGraph dhtHistory={staticDht.dhtHistory}/>
+                    <DhtHistory dhtHistory={staticDht.dhtHistory} />
                 </div>
 
                 <div className='flex-grow hidden sm:block' />
@@ -54,25 +57,32 @@ function Home(staticDht: HomeData) {
     )
 }
 
-function getDht(): DhtApi {
-    //    const res = await fetch('http:/127.0.0.1:3000/dht')
-    //const dht: DhtApi = await res.json();
-    return {
-        time: "yeet",
-        temperature: 27.2 + Math.floor(Math.random() * 10),
-        humidity: 69,
-    }
+async function getDht(): Promise<Dht> {
+    const res = await fetch('http:/127.0.0.1:3000/dht')
+    return await res.json();
+    // return {
+    //     time: "yeet",
+    //     temperature: 27.2 + Math.floor(Math.random() * 10),
+    //     humidity: 69,
+    // }
 }
 
-async function getDhtHistory(): Promise<DhtApi[]> {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history');
+async function getDhtHistory(): Promise<Dht[]> {
+    console.log(process.env.NEXT_PUBLIC_API_HOST)
+    const res = await fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
     return await res.json();
 }
 
 export async function getStaticProps() {
     return {
         props: {
-            dht: getDht(),
+            dht: await getDht(),
             dhtHistory: await getDhtHistory(),
         }
     }
