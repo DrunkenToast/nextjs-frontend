@@ -8,7 +8,7 @@ type Props = {
     dhtHistory: Dht[]
 }
 
-const dhtHistory = ({ dhtHistory }: Props) => {
+const DhtHistory = ({ dhtHistory }: Props) => {
     const { addToast } = useToasts();
 
     const [ history, setHistory ] = useState<Dht[]>([])
@@ -18,7 +18,7 @@ const dhtHistory = ({ dhtHistory }: Props) => {
 
     const summarizeHistory = () => {
         const cutOffDay = new Date();
-        cutOffDay.setDate(cutOffDay.getDate() - 2);
+        cutOffDay.setDate(cutOffDay.getDate() - 1);
 
         const index = history.findIndex((dht) => {
             return (new Date(dht.time)).getTime() < cutOffDay.getTime();
@@ -45,8 +45,7 @@ const dhtHistory = ({ dhtHistory }: Props) => {
         }
 
         let averagePerHour: Dht[] = [];
-        for (let hour of dhtsPerHour.keys()) {
-            const dhts = dhtsPerHour.get(hour)!;
+        dhtsPerHour.forEach((dhts, hour) => {
             let avgT = 0;
             let avgH = 0;
             for (const dht of dhts) {
@@ -58,7 +57,7 @@ const dhtHistory = ({ dhtHistory }: Props) => {
                 temperature: avgT/dhts.length,
                 humidity: avgH/dhts.length,
             })
-        }
+        })
         console.log(averagePerHour);
         return averagePerHour.reverse();
     }
@@ -73,7 +72,7 @@ const dhtHistory = ({ dhtHistory }: Props) => {
                     {
                         history.map((dht) => {
                             return (
-                                <tr >
+                                <tr key={dht.time}>
                                     <td>{dht.time}</td>
                                     <td>{dht.temperature}&deg;C</td>
                                     <td>{dht.humidity}%</td>
@@ -88,4 +87,4 @@ const dhtHistory = ({ dhtHistory }: Props) => {
     )
 }
 
-export default dhtHistory;
+export default DhtHistory;
