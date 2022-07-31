@@ -57,26 +57,33 @@ function Home(staticDht: HomeData) {
     )
 }
 
+// To prevent failing at build (during docker compose build) dummy data is used as
+// a fallback method. TODO: I would prefer to find a better method for this.
 async function getDht(): Promise<Dht> {
-    const res = await fetch('http:/127.0.0.1:3000/dht')
-    return await res.json();
-    // return {
-    //     time: "yeet",
-    //     temperature: 27.2 + Math.floor(Math.random() * 10),
-    //     humidity: 69,
-    // }
+    return fetch('http:/127.0.0.1:3000/dht')
+        .then((res) => res.json() as Promise<Dht>)
+        .catch((e) => {
+            return {
+                time: "Dummy data",
+                temperature: 0,
+                humidity: 0,
+            }
+        })
 }
 
 async function getDhtHistory(): Promise<Dht[]> {
     console.log(process.env.NEXT_PUBLIC_API_HOST)
-    const res = await fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history', {
+    return fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history', {
         method: 'GET',
         mode: 'cors',
         headers: {
             'Content-Type': 'application/json'
         },
     })
-    return await res.json();
+        .then((res) => res.json() as Promise<Dht[]>)
+        .catch((e) => {
+            return [];
+        })
 }
 
 export async function getStaticProps() {
@@ -84,7 +91,8 @@ export async function getStaticProps() {
         props: {
             dht: await getDht(),
             dhtHistory: await getDhtHistory(),
-        }
+        },
+        revalidate: 60*5
     }
 }
 
