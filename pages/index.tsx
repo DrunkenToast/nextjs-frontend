@@ -42,7 +42,7 @@ function Home(staticDht: HomeData) {
                 <div className='flex-grow hidden sm:block' />
 
                 <div className='sm:w-96 w-full mt-32'>
-                    <div className='flex flex-row' onClick={() => addToast("Testers!", ToastType.error)} >
+                    <div className='flex flex-row'>
                         <Card data={dht.temperature + 'ºC'} description='Temperature' />
                         <Card data={dht.humidity + '%'} description='Humidity' />
                     </div>
@@ -60,7 +60,7 @@ function Home(staticDht: HomeData) {
 // To prevent failing at build (during docker compose build) dummy data is used as
 // a fallback method. TODO: I would prefer to find a better method for this.
 async function getDht(): Promise<Dht> {
-    return fetch('http:/127.0.0.1:3000/dht')
+    return fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht')
         .then((res) => res.json() as Promise<Dht>)
         .catch((e) => {
             return {
@@ -72,7 +72,6 @@ async function getDht(): Promise<Dht> {
 }
 
 async function getDhtHistory(): Promise<Dht[]> {
-    console.log(process.env.NEXT_PUBLIC_API_HOST)
     return fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history', {
         method: 'GET',
         mode: 'cors',

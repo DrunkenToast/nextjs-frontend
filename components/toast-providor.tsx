@@ -50,7 +50,6 @@ export function ToastProvider({ children }: Props) {
     const removeToast = (id: String) => {
         let newToasts = toastRef.current;
         newToasts = newToasts.filter((toast) => toast.id !== id)
-        console.log(toasts, newToasts)
         setToasts(newToasts);
     }
 

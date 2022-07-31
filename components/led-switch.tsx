@@ -5,7 +5,6 @@ const LedSwitch = () => {
     const { addToast } = useToasts();
 
     function switchLed(state: boolean) {
-        console.log(process.env.NEXT_PUBLIC_API_HOST + '/led', state);
         fetch(process.env.NEXT_PUBLIC_API_HOST + '/led', {
             method: 'PUT',
             mode: 'cors',

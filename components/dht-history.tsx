@@ -24,7 +24,6 @@ const DhtHistory = ({ dhtHistory }: Props) => {
             return (new Date(dht.time)).getTime() < cutOffDay.getTime();
         });
         const dayHistory = index === -1 ? history : history.slice(0, index)
-        console.log("day:", dayHistory)
 
         const dhtsPerHour = new Map<number, {temperature: number, humidity: number}[]>();
 
@@ -58,7 +57,6 @@ const DhtHistory = ({ dhtHistory }: Props) => {
                 humidity: avgH/dhts.length,
             })
         })
-        console.log(averagePerHour);
         return averagePerHour.reverse();
     }
 

@@ -7,7 +7,6 @@ const SendMessage = () => {
     const { addToast } = useToasts();
 
     function handleMessageSubmit(event: FormEvent) {
-        console.log('TEST', msg)
         fetch(process.env.NEXT_PUBLIC_API_HOST + '/msg', {
             method: 'POST',
             mode: 'cors',
@@ -23,10 +22,10 @@ const SendMessage = () => {
                     throw new Error('Request failed');
             })
             .then(() => {
-                addToast('Switched LED ', ToastType.success);
+                addToast('Sent message to display', ToastType.success);
             })
             .catch((err) => {
-                addToast('Failed to switch LED', ToastType.error);
+                addToast('Failed to send message', ToastType.error);
                 console.error(err);
             })
 
