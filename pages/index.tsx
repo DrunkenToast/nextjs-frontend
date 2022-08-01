@@ -3,10 +3,8 @@ import Head from 'next/head'
 import SendMessage from '../components/send-message'
 import LedSwitch from '../components/led-switch'
 import { Dht } from '../models/dht'
-import { ToastType } from '../models/toast'
 import ToastContainer from '../components/toast-container'
 import { useEffect, useState } from 'react'
-import { useToasts } from '../components/toast-providor'
 import DhtHistory from '../components/dht-history'
 
 interface HomeData {
@@ -15,17 +13,18 @@ interface HomeData {
 }
 
 function Home(staticDht: HomeData) {
-    const { addToast } = useToasts();
     const [dht, setDht] = useState<Dht>(staticDht.dht);
+    const [dhtHistory, setDhtHistory] = useState<Dht[]>(staticDht.dhtHistory);
 
     useEffect(() => {
         const interval = setInterval(() => {
             const fetchData = async () => {
-                setDht(await getDht());
+                setDht(await getDht(process.env.NEXT_PUBLIC_API_HOST!));
+                setDhtHistory(await getDhtHistory(process.env.NEXT_PUBLIC_API_HOST!));
             }
             fetchData();
-            console.log('Refresh :)')
-        }, 120 * 1000);
+            console.log('Refresh refreshing DHT data')
+        }, 60 * 1000);
 
         return () => clearInterval(interval);
     }, []);
@@ -33,7 +32,7 @@ function Home(staticDht: HomeData) {
     return (
         <div>
             <Head>
-                <title>Unnamed project</title>
+                <title>Arduino Frontend</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
@@ -48,7 +47,7 @@ function Home(staticDht: HomeData) {
                     </div>
                     <LedSwitch />
                     <SendMessage />
-                    <DhtHistory dhtHistory={staticDht.dhtHistory} />
+                    <DhtHistory dhtHistory={dhtHistory} />
                 </div>
 
                 <div className='flex-grow hidden sm:block' />
@@ -59,8 +58,8 @@ function Home(staticDht: HomeData) {
 
 // To prevent failing at build (during docker compose build) dummy data is used as
 // a fallback method. TODO: I would prefer to find a better method for this.
-async function getDht(): Promise<Dht> {
-    return fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht')
+async function getDht(host: string): Promise<Dht> {
+    return fetch(host + '/dht')
         .then((res) => res.json() as Promise<Dht>)
         .catch((e) => {
             return {
@@ -71,8 +70,8 @@ async function getDht(): Promise<Dht> {
         })
 }
 
-async function getDhtHistory(): Promise<Dht[]> {
-    return fetch(process.env.NEXT_PUBLIC_API_HOST + '/dht/history', {
+async function getDhtHistory(host: string): Promise<Dht[]> {
+    return fetch(host + '/dht/history', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -88,12 +87,11 @@ async function getDhtHistory(): Promise<Dht[]> {
 export async function getStaticProps() {
     return {
         props: {
-            dht: await getDht(),
-            dhtHistory: await getDhtHistory(),
+            dht: await getDht(process.env.SS_API_HOST!),
+            dhtHistory: await getDhtHistory(process.env.SS_API_HOST!),
         },
-        revalidate: 60*5
+        revalidate: 60 * 5
     }
 }
-
 
 export default Home

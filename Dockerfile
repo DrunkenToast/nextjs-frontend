@@ -9,7 +9,11 @@ COPY . .
 RUN yarn install
 RUN yarn build
 
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+RUN chown -R nextjs:nodejs /usr/app/.next
+
 EXPOSE 8080
-USER node
+USER nextjs
 CMD pm2-runtime 'yarn start --port 8080'
 
